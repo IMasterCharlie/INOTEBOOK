@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Admin Dashboard</title>
+</head>
+<body class="bg-green-100">
+  <div class="min-h-screen flex flex-col items-center">
+    <div class="w-full bg-green-500 px-4 py-2 shadow-lg flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white">Admin Dashboard</h1>
+      <form action="/logout" method="POST">
+        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Logout</button>
+      </form>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full mb-8 mt-4">
+      <h2 class="text-2xl font-bold mb-4">Users</h2>
+      <table class="w-full table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Username</th>
+            <th class="px-4 py-2">Notes</th>
+            <th class="px-4 py-2">Actions</th> <!-- Added Actions column -->
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user => { %>
+            <tr class="border-t">
+              <td class="px-4 py-2"><%= user.username %></td>
+              <td class="px-4 py-2">
+                <% notes.filter(note => note.userId.toString() === user._id.toString()).forEach(note => { %>
+                  <div class="border p-2 mb-2 rounded-lg">
+                    <h3 class="font-bold"><%= note.title %></h3>
+                    <p><%= note.description %></p>
+                    <small>Created at: <%= new Date(note.createdAt).toLocaleString() %></small><br>
+                    <small>Updated at: <%= new Date(note.updatedAt).toLocaleString() %></small>
+                    <!-- Move form inside the loop -->
+                    <form action="/delete-note-admin" method="POST">
+                      <input type="hidden" name="id" value="<%= note._id %>">
+                      <button type="submit" class="text-red-500">Delete Note</button>
+                    </form>
+                  </div>
+                <% }) %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <<div class="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full">
+      <h2 class="text-2xl font-bold mb-4">User Activities</h2>
+      <table class="w-full table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Username</th>
+            <th class="px-4 py-2">Activity</th>
+            <th class="px-4 py-2">Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% activities.forEach(activity => { %>
+            <tr class="border-t">
+              <td class="px-4 py-2"><%= activity.userId ? activity.userId.username : 'Unknown User' %></td> <!-- Safely handle undefined userId -->
+              <td class="px-4 py-2"><%= activity.activity %></td>
+              <td class="px-4 py-2"><%= new Date(activity.timestamp).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    
+    
+    
+  </div>
+  <!-- Notification form in Admin Dashboard -->
+<div class="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full mb-8 mt-4 mx-24">
+    <h2 class="text-2xl font-bold mb-4">Send Notification</h2>
+    <form action="/send-notification" method="POST" class="space-y-4">
+      <div>
+        <label for="userId" class="block text-sm font-medium text-gray-700">Select User</label>
+        <select id="userId" name="userId" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          <% users.forEach(user => { %>
+            <option value="<%= user._id %>"><%= user.username %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+        <input type="text" id="title" name="title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+      </div>
+      <div>
+        <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+        <textarea id="message" name="message" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Send Notification</button>
+    </form>
+  </div>
+  
+  <footer class="bg-gray-900 text-white text-center py-4 mt-4">
+    <p>&copy; 2024 Your Website. All rights reserved.</p>
+  </footer>
+</body>
+</html>

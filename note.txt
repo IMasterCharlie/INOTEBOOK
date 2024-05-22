@@ -1,0 +1,713 @@
+
+//signup.jsx reactjs code 
+import React, { useState } from 'react';
+
+function Signup() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [usernameLengthMessage, setUsernameLengthMessage] = useState('');
+  const [passwordStrengthMessage, setPasswordStrengthMessage] = useState('');
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+    const usernameLength = event.target.value.length;
+    if (usernameLength < 5) {
+      setUsernameLengthMessage('Username is too short (minimum 5 characters)');
+    } else if (usernameLength > 20) {
+      setUsernameLengthMessage('Username is too long (maximum 20 characters)');
+    } else {
+      setUsernameLengthMessage('');
+    }
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+    const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    if (!passwordStrengthRegex.test(event.target.value)) {
+      setPasswordStrengthMessage(
+        <div className="bg-red-100 text-red-700 p-2 rounded-lg">
+          <strong>Password must meet the following criteria:</strong>
+          <ul>
+            <li>Password must contain at least one lowercase letter</li>
+            <li>Password must contain at least one uppercase letter</li>
+            <li>Password must contain at least one number</li>
+            <li>Password must contain at least one symbol</li>
+            <li>Password must be at least 8 characters long</li>
+          </ul>
+        </div>
+      );
+    } else {
+      setPasswordStrengthMessage('');
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    const passwordInput = document.getElementById('password');
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+    } else {
+      passwordInput.type = 'password';
+    }
+  };
+
+  return (
+    <div className="bg-green-100 flex items-center justify-center h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+        <div id="error-message" className="bg-red-100 text-red-700 p-4 rounded-lg mb-4" style={{ display: 'none' }}></div>
+        <form action="/signup" method="POST" className="space-y-4">
+          <div>
+            <label htmlFor="username" className="block text-gray-700">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" minLength="5" maxLength="20" value={username} onChange={handleUsernameChange} required />
+            <span className="text-red-500 text-sm">{usernameLengthMessage}</span>
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-gray-700">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" value={password} onChange={handlePasswordChange} required />
+            <input type="checkbox" id="checkbox" onClick={togglePasswordVisibility} /> <label htmlFor="checkbox">Show Password</label>
+            <span className="text-gray-500 text-sm">{passwordStrengthMessage}</span>
+          </div>
+          <button type="submit" className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Sign Up</button>
+          <p className="text-center text-gray-600 mt-4">Already have an account? <a href="/login" className="text-green-500 hover:text-green-700 underline">Login</a></p>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default Signup;
+
+
+//login.jsx reactjs code
+
+import React, { useState, useEffect } from 'react';
+
+function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorParam = urlParams.get('error');
+    if (errorParam) {
+      const decodedErrorMessage = decodeURIComponent(errorParam);
+      setErrorMessage(decodedErrorMessage);
+      // Remove the 'error' parameter from the URL
+      const url = new URL(window.location);
+      url.searchParams.delete('error');
+      window.history.replaceState({}, document.title, url);
+    }
+  }, []);
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  return (
+    <div className="bg-gray-100 flex items-center justify-center h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        {errorMessage && (
+          <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-4">{errorMessage}</div>
+        )}
+        <form action="/login" method="POST" className="space-y-4">
+          <div>
+            <label htmlFor="username" className="block text-gray-700">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" value={username} onChange={handleUsernameChange} required />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-gray-700">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" value={password} onChange={handlePasswordChange} required />
+          </div>
+          <button type="submit" className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-800">Login</button>
+          <p className="text-center text-gray-600 mt-4">Don't have an account? <a href="/signup" className="text-primary underline">Sign up</a></p>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default Login;
+
+//dashboard.jsx reactjs code
+
+import React, { useEffect } from 'react';
+
+function Dashboard({ username, hasNewNotifications, notes }) {
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const createdParam = urlParams.get('created');
+    const updatedParam = urlParams.get('updated');
+    const deletedParam = urlParams.get('deleted');
+    if (createdParam) {
+      showToast('Note created successfully', 'bg-green-500');
+    } else if (updatedParam) {
+      showToast('Note updated successfully', 'bg-yellow-500');
+    } else if (deletedParam) {
+      showToast('Note deleted successfully', 'bg-red-500');
+    }
+  }, []);
+
+  const showToast = (message, bgColorClass) => {
+    const toastContainer = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `${bgColorClass} text-white p-4 rounded-lg shadow-lg`;
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  };
+
+  const removeRedMark = () => {
+    const redMark = document.querySelector('.bg-red-500');
+    if (redMark) {
+      redMark.remove();
+    }
+  };
+
+  return (
+    <div className="bg-green-100 min-h-screen flex flex-col items-center">
+      <div className="w-full bg-white px-4 py-2 shadow-lg flex justify-between items-center">
+        <h1 className="text-2xl font-bold">{username}'s Dashboard</h1>
+        <div className="flex items-center space-x-4">
+          <a href="/notifications" className="text-green-500 relative" id="notifications-link" onClick={removeRedMark}>
+            Notifications
+            {hasNewNotifications && (
+              <span className="absolute h-2 w-2 bg-red-500 rounded-full top-0 right-0"></span>
+            )}
+          </a>
+          <form action="/logout" method="POST">
+            <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Logout</button>
+          </form>
+        </div>
+      </div>
+      
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full mb-8 mt-4">
+        <h2 className="text-2xl font-bold mb-4">Create a Note</h2>
+        <form action="/create-note" method="POST" className="space-y-4" id="create-note-form">
+          <input type="text" name="title" placeholder="Title"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          <input type="text" name="description" placeholder="Description"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          <input type="text" name="tag" placeholder="Tag"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          <div className="flex justify-between items-center">
+            <button type="submit"
+              className="w-1/2 px-4 py-2 mx-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Create Note</button>
+          </div>
+        </form>
+      </div>
+      
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full">
+        <h2 className="text-2xl font-bold mb-4">Your Notes</h2>
+        <div className="space-y-4">
+          {notes.map(note => (
+            <div className="border rounded-lg p-4 shadow" key={note._id}>
+              <h3 className="text-xl font-bold">
+                {note.title}
+              </h3>
+              <p className="text-gray-700">
+                {note.description}
+              </p>
+              <p className="text-gray-500 text-sm">
+                {note.tag}
+              </p>
+              <p className="text-gray-400 text-xs">
+                Created on: {new Date(note.createdAt).toLocaleString()}
+                {note.updatedAt && (
+                  <>
+                    <br />
+                    Updated on: {new Date(note.updatedAt).toLocaleString()}
+                  </>
+                )}
+              </p>
+              <div className="flex items-center mt-4">
+                <button className="text-green-500 mr-2" onClick={() => toggleButtons(note._id)}>
+                  <span className="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+                <div className="toggle-buttons flex items-center space-x-2 hidden">
+                  <form action="/update-note" method="POST" className="space-y-2 w-full">
+                    <input type="hidden" name="id" value={note._id} />
+                    <input type="text" name="title" placeholder="Title" defaultValue={note.title}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                    <input type="text" name="description" placeholder="Description" defaultValue={note.description}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                    <div className="flex justify-between">
+                      <button type="submit"
+                        className="w-1/2 px-4 py-2 mx-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Update Note</button>
+                      <button type="button" onClick={() => deleteNote(note._id)}
+                        className="w-1/2 px-4 py-2 mx-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete Note</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <footer className="bg-gray-900 text-white text-center py-4 mt-4">
+        <p>&copy; 2024 Your Website. All rights reserved.</p>
+      </footer>
+
+      <div id="toast-container" className="fixed bottom-4 right-4 space-y-4"></div>
+    </div>
+  );
+}
+
+export default Dashboard;
+
+//admin-dashboard.jsx reactjs code
+
+import React from 'react';
+
+function AdminDashboard({ users, notes, activities }) {
+  return (
+    <div className="bg-green-100 min-h-screen flex flex-col items-center">
+      <div className="w-full bg-green-500 px-4 py-2 shadow-lg flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
+        <form action="/logout" method="POST">
+          <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Logout</button>
+        </form>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full mb-8 mt-4">
+        <h2 className="text-2xl font-bold mb-4">Users</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Username</th>
+              <th className="px-4 py-2">Notes</th>
+              <th className="px-4 py-2">Actions</th> {/* Added Actions column */}
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user._id} className="border-t">
+                <td className="px-4 py-2">{user.username}</td>
+                <td className="px-4 py-2">
+                  {notes
+                    .filter(note => note.userId.toString() === user._id.toString())
+                    .map(note => (
+                      <div key={note._id} className="border p-2 mb-2 rounded-lg">
+                        <h3 className="font-bold">{note.title}</h3>
+                        <p>{note.description}</p>
+                        <small>Created at: {new Date(note.createdAt).toLocaleString()}</small><br />
+                        <small>Updated at: {new Date(note.updatedAt).toLocaleString()}</small>
+                        {/* Move form inside the loop */}
+                        <form action="/delete-note-admin" method="POST">
+                          <input type="hidden" name="id" value={note._id} />
+                          <button type="submit" className="text-red-500">Delete Note</button>
+                        </form>
+                      </div>
+                    ))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full">
+        <h2 className="text-2xl font-bold mb-4">User Activities</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Username</th>
+              <th className="px-4 py-2">Activity</th>
+              <th className="px-4 py-2">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            {activities.map(activity => (
+              <tr key={activity._id} className="border-t">
+                <td className="px-4 py-2">{activity.userId.username}</td>
+                <td className="px-4 py-2">{activity.activity}</td>
+                <td className="px-4 py-2">{new Date(activity.timestamp).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Notification form in Admin Dashboard */}
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full mb-8 mt-4 mx-24">
+        <h2 className="text-2xl font-bold mb-4">Send Notification</h2>
+        <form action="/send-notification" method="POST" className="space-y-4">
+          <div>
+            <label htmlFor="userId" className="block text-sm font-medium text-gray-700">Select User</label>
+            <select id="userId" name="userId" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              {users.map(user => (
+                <option key={user._id} value={user._id}>{user.username}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+            <input type="text" id="title" name="title" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+          </div>
+          <div>
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
+            <textarea id="message" name="message" rows="4" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+          </div>
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Send Notification</button>
+        </form>
+      </div>
+      <footer className="bg-gray-900 text-white text-center py-4 mt-4">
+        <p>&copy; 2024 Your Website. All rights reserved.</p>
+      </footer>
+    </div>
+  );
+}
+
+export default AdminDashboard;
+
+
+//index.jsx reactjs code
+
+import React from 'react';
+
+function Index() {
+  return (
+    <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+      <h1 className="text-4xl font-bold mb-8">Welcome to Cloud Notepad</h1>
+      <div className="flex space-x-4">
+        <a href="/signup" className="px-4 py-2 bg-green-600 text-white rounded-lg">Sign Up</a>
+        <a href="/login" className="px-4 py-2 bg-yellow-600 text-white rounded-lg">Log In</a>
+      </div>
+    </div>
+  );
+}
+
+export default Index;
+
+//notifications.jsx reactjs code
+
+import React from 'react';
+
+function Notifications({ notifications }) {
+  return (
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center">
+      <div className="w-full bg-blue-500 px-4 py-2 shadow-lg flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-white">Notifications</h1>
+        <a href="/dashboard" className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Dashboard</a>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full mb-8 mt-4">
+        <h2 className="text-2xl font-bold mb-4">Your Notifications</h2>
+        <div className="space-y-4">
+          {notifications.map(notification => (
+            <div key={notification._id} className="border rounded-lg p-4 shadow">
+              <h3 className="text-xl font-bold">{notification.title}</h3>
+              <p className="text-gray-700">{notification.message}</p>
+              <small className="text-gray-500">Received at: {new Date(notification.createdAt).toLocaleString()}</small>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Notifications;
+
+
+//app.js 
+
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+const app = express();
+const PORT = 3000;
+const SECRET_KEY = 'your_secret_key';
+const ADMIN_CREDENTIALS = { username: 'Admin', password: 'Password' };
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
+
+// MongoDB connection
+mongoose.connect('mongodb://localhost:27017/cloud-notepad', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// User Schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Note Schema
+const noteSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  tag: String,
+  userId: mongoose.Schema.Types.ObjectId,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date }
+});
+
+const Note = mongoose.model('Note', noteSchema);
+
+// Activity Schema
+const activitySchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.Mixed, required: true },
+  activity: String,
+  timestamp: { type: Date, default: Date.now }
+});
+
+const Activity = mongoose.model('Activity', activitySchema);
+
+// Notification Schema
+const notificationSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const Notification = mongoose.model('Notification', notificationSchema);
+
+// Authentication Middleware
+const authMiddleware = (req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err) {
+        return res.redirect('/login');
+      } else {
+        req.userId = decoded.id;
+        next();
+      }
+    });
+  } else {
+    res.redirect('/login');
+  }
+};
+
+// Admin Middleware
+const adminMiddleware = (req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err || decoded.username !== ADMIN_CREDENTIALS.username) {
+        return res.redirect('/login');
+      } else {
+        next();
+      }
+    });
+  } else {
+    res.redirect('/login');
+  }
+};
+
+// Routes
+app.get('/', (req, res) => {
+  res.render('index');
+});
+
+app.get('/signup', (req, res) => {
+  res.render('signup');
+});
+
+app.post('/signup', async (req, res) => {
+  const { username, password } = req.body;
+  
+  // Check if username already exists
+  const existingUser = await User.findOne({ username });
+  if (existingUser) {
+    return res.redirect('/signup?error=Username%20already%20exists.%20Please%20try%20another%20username');
+  }
+
+  // Enforce username length
+  if (username.length < 5 || username.length > 20) {
+    return res.redirect('/signup?error=Username%20should%20be%20between%205%20and%2020%20characters%20long');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = new User({ username, password: hashedPassword });
+  await newUser.save();
+  res.redirect('/login');
+});
+
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+    // Admin login
+    const token = jwt.sign({ id: 'admin', username }, SECRET_KEY);
+    res.cookie('token', token, { httpOnly: true });
+    return res.redirect('/admin-dashboard');
+  }
+
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    // User does not exist
+    return res.redirect('/login?error=User%20does%20not%20exist');
+  }
+
+  if (await bcrypt.compare(password, user.password)) {
+    // Valid user
+    const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY);
+    res.cookie('token', token, { httpOnly: true });
+    return res.redirect('/dashboard');
+  } else {
+    // Invalid password
+    return res.redirect('/login?error=Invalid%20username%20or%20password');
+  }
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/login');
+});
+
+// Route for rendering dashboard with username and notes
+// Render dashboard with notifications
+app.get('/dashboard', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    const notes = await Note.find({ userId: req.userId });
+    const hasNewNotifications = await checkForNewNotifications(req.userId); // Check if there are new notifications
+    res.render('dashboard', { username: user.username, notes, hasNewNotifications });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).send('An error occurred');
+  }
+});
+
+// Function to check for new notifications
+const checkForNewNotifications = async (userId) => {
+  try {
+    const notifications = await Notification.find({ userId });
+    return notifications.length > 0;
+  } catch (error) {
+    console.error('Error checking for new notifications:', error);
+    return false;
+  }
+};
+
+
+// logActivity function
+const logActivity = async (userId, activity) => {
+  const newActivity = new Activity({ activity, userId });
+  await newActivity.save();
+};
+
+app.post('/create-note', authMiddleware, async (req, res) => {
+  const { title, description, tag } = req.body;
+  const newNote = new Note({
+    title,
+    description,
+    tag,
+    userId: req.userId,
+    createdAt: new Date()
+  });
+  await newNote.save();
+  await logActivity(req.userId, 'Created a note');
+  res.redirect('/dashboard?created=true');
+});
+
+app.post('/update-note', authMiddleware, async (req, res) => {
+  const { id, title, description } = req.body;
+  await Note.findByIdAndUpdate(id, {
+    title,
+    description,
+    updatedAt: new Date()
+  });
+  await logActivity(req.userId, 'Updated a note');
+  res.redirect('/dashboard?updated=true');
+});
+
+app.post('/delete-note', authMiddleware, async (req, res) => {
+  const { id } = req.body;
+  console.log('Deleting note with ID:', id);
+  try {
+    await Note.findByIdAndDelete(id);
+    console.log('Note deleted successfully');
+    await logActivity(req.userId, 'Deleted a note');
+    res.json({ message: 'Note deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    res.status(500).json({ message: 'An error occurred while deleting the note.' });
+  }
+});
+
+// Admin Dashboard Route
+app.get('/admin-dashboard', adminMiddleware, async (req, res) => {
+  try {
+    const users = await User.find({});
+    const notes = await Note.find({});
+    const activities = await Activity.find({}).populate('userId'); // Populate userId field
+    res.render('admin-dashboard', { users, notes, activities });
+  } catch (error) {
+    console.error('Error fetching admin data:', error);
+    res.status(500).send('An error occurred');
+  }
+});
+
+// Route for deleting a note from admin dashboard
+app.post('/delete-note-admin', adminMiddleware, async (req, res) => {
+  const { id } = req.body;
+  console.log('Admin is deleting note with ID:', id);
+  try {
+    // Delete the note
+    await Note.findByIdAndDelete(id);
+    console.log('Note deleted successfully');
+
+    // Log the activity with admin identifier
+    await logActivity('admin', 'Deleted a note');
+
+    // Redirect the user to the admin dashboard
+    res.redirect('/admin-dashboard');
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    res.status(500).json({ message: 'An error occurred while deleting the note.' });
+  }
+});
+
+// Route for sending notification
+app.post('/send-notification', adminMiddleware, async (req, res) => {
+  const { userId, title, message } = req.body;
+  try {
+    const notification = new Notification({ userId, title, message });
+    await notification.save();
+    res.redirect('/admin-dashboard');
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    res.status(500).send('An error occurred');
+  }
+});
+
+// Route for viewing notifications
+app.get('/notifications', authMiddleware, async (req, res) => {
+  try {
+    const notifications = await Notification.find({ userId: req.userId }).sort({ createdAt: -1 });
+    res.render('notifications', { notifications });
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).send('An error occurred');
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
