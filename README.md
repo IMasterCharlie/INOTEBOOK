@@ -43,7 +43,7 @@ Cloud Notepad is a full-stack web application that allows users to securely crea
 
 1. **Clone the repository:**
    ```sh
-   git clone <your-repo-url>
+   git clone https://github.com/IMasterCharlie/INOTEBOOK.git
    cd INOTEBOOK
    ```
 
@@ -133,11 +133,23 @@ This project is licensed under the ISC License.
 
 ## Screenshots
 
-- SignUp page
+- SignUp page  
 ![Project Logo](SignUp_Page.PNG)
 
-- Login Page
+- Login Page  
 ![Project Logo](Login_Page.PNG)
+
+- Dashboard Page  
+![Project Logo](Dashboard_Page.PNG)
+
+- Notification Page  
+![Project Logo](Notification_Page.PNG)
+
+- Admin Page  
+![Project Logo](Admin_Dashboard.PNG)
+
+- Update Section  
+![Project Logo](UpdateNote.PNG)
 
 ---
 
