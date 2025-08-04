@@ -18,7 +18,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/cloud-notepad', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://imastercharlie786:Mehraj4781@portfolio.68g7x.mongodb.net/?retryWrites=true&w=majority&appName=Portfolio', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // User Schema
 const userSchema = new mongoose.Schema({
